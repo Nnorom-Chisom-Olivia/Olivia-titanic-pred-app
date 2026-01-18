@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Titanic Survival Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #9568ab, #876494);
+            color: white;
+            text-align: center;
+            padding: 50px;
+        }
+        input, select {
+            padding: 8px;
+            margin: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: #fff;
+            color: #151017;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        footer {
+            margin-top: 50px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Titanic Survival Predictor</h1>
+    <form action="/predict" method="post">
+        <label>Pclass (1,2,3):</label>
+        <input type="number" name="Pclass" min="1" max="3" required><br>
+        
+        <label>Sex (Male/Female):</label>
+        <input type="text" name="Sex" required><br>
+        
+        <label>Age:</label>
+        <input type="number" name="Age" step="0.1" required><br>
+        
+        <label>SibSp (number of siblings/spouses aboard):</label>
+        <input type="number" name="SibSp" min="0" required><br>
+        
+        <label>Parch (number of parents/children aboard):</label>
+        <input type="number" name="Parch" min="0" required><br>
+        
+        <label>Fare:</label>
+        <input type="number" name="Fare" step="0.1" required><br>
+        
+        <label>Embarked (C, Q, S):</label>
+        <input type="text" name="Embarked" required><br>
+        
+        <button type="submit">Predict</button>
+    </form>
+
+    {% if prediction_text %}
+        <h2>{{ prediction_text }}</h2>
+    {% endif %}
+
+    <footer>
+        © 2026 Nnorom Chisom, MSc Bioinformatics Student
+    </footer>
+</body>
+</html>
