@@ -5,12 +5,12 @@ import joblib
 app = Flask(__name__)
 
 # Load model and columns
-model = joblib.load("titanic_model.pkl")
-model_columns = joblib.load("titanic_columns.joblib")
+model = joblib.load("model/titanic_survival_model.pkl")
+model_columns = joblib.load("model/titanic_columns.joblib")
 
 @app.route("/")
 def home():
-    return render_template("index.html")  # Your HTML frontend
+    return render_template("index.html") 
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -18,13 +18,10 @@ def predict():
         # Get form data from HTML
         data = {
             "Pclass": int(request.form["Pclass"]),
+            "Sex": 1 if request.form["Sex"].lower() == "male" else 0, # Match .map({'male': 1, 'female': 0})
             "Age": float(request.form["Age"]),
             "SibSp": int(request.form["SibSp"]),
-            "Parch": int(request.form["Parch"]),
-            "Fare": float(request.form["Fare"]),
-            "Sex_male": 1 if request.form["Sex"].lower() == "male" else 0,
-            "Embarked_Q": 1 if request.form["Embarked"].upper() == "Q" else 0,
-            "Embarked_S": 1 if request.form["Embarked"].upper() == "S" else 0
+            "Fare": float(request.form["Fare"])
         }
 
         # Create DataFrame and reindex to match training columns
@@ -33,7 +30,7 @@ def predict():
 
         # Predict
         prediction = model.predict(input_df)[0]
-        result = "Survived" if prediction == 1 else "Not Survived"
+        result = "Survived" if prediction == 1 else "Did not Survive"
 
         return render_template("index.html", prediction_text=f"Prediction: {result}")
 
@@ -41,4 +38,6 @@ def predict():
         return render_template("index.html", prediction_text=f"Error: {str(e)}")
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)

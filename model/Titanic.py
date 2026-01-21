@@ -17,22 +17,16 @@ print(data.head())
 print(data.info())
 
  # Data Preprocessing; Drop columns that are not useful for prediction
-data = data.drop(['PassengerId', 'Name', 'Ticket', 'Cabin'], axis=1)
+data = data.drop(['PassengerId', 'Name', 'Ticket', 'Cabin', 'Parch', 'Embarked'], axis=1)
 
- #convert categorical variables into dummy variables
-data = pd.get_dummies(data, columns=['Sex', 'Embarked'], 
-drop_first=True) 
+data['Sex'] = data['Sex'].map({'male': 1, 'female': 0})
+
 
  # Handle missing values
  # Fill missing age values with median
 data['Age'] = data['Age'].fillna(data['Age'].median())
+data['Fare'] = data['Fare'].fillna(data['Fare'].median())
 
- #Fill missing Embarked with mode
-if 'Embarked' in data.columns:
-    mode_value = data['Embarked'].mode()[0]  # Get the mode value
-    data['Embarked'].fillna(mode_value, inplace=True)
-else:
-    print("'Embarked' column not found.")
 
 #preview after preprocessing
 print('\nAfter preprocessing:')
@@ -102,15 +96,19 @@ plt.legend(loc='lower right')
 plt.savefig("roc_curve.png", dpi=300)
 plt.show()
 
+import os
 import joblib
 
-joblib.dump(X.columns.tolist(), "titanic_columns.joblib")
+# Create the folder if it doesn't exist
+if not os.path.exists('model'):
+    os.makedirs('model')
 
-# Save the trained model
-joblib.dump(model, "titanic_model.pkl")
+# Updated save paths for Scorac Part C
+joblib.dump(X.columns.tolist(), "model/titanic_columns.joblib")
+joblib.dump(model, "model/titanic_survival_model.pkl")
 
 
 """confusion matrics explanation:TP=55,TN=89, FP=16, FN=19.
-The model achieved: Accuracy=80.4%, Precision=77.5%, Recall=74.3%, F1 score=75.9%, and AUC of 88%.
+The model achieved: Accuracy=79.3%, Precision=76.8%, Recall=72%, F1 score=74.1%, and AUC of 88%.
 These results show that the model is well balanced, with good predictive power and strong ability to distinguish between the two classes. 
 The high AUC score confirms that the model generizes well and is effective for Binary classification Tasks."""
